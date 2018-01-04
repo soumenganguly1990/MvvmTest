@@ -8,8 +8,10 @@ import android.view.View
 import com.soumen.mvvmtest.R
 import com.soumen.mvvmtest.callbackinterfaces.DbOperationsInterface
 import com.soumen.mvvmtest.extras.MethodNameEnum
+import com.soumen.mvvmtest.roomdbops.entities.UserEntity
 import com.soumen.mvvmtest.utils.DbHelper
 import com.soumen.mvvmtest.viewmodels.LoginViewModel
+import com.soumen.mvvmtest.viewmodels.RegisterViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 /**
@@ -30,6 +32,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, DbOperationsInte
 
         edtUserId.setText("1001")
         edtUserPassword.setText("123")
+
+        //createAnUserOnlyFirstTime()   // uncomment this function if running for the first time
     }
 
     override fun onResume() {
@@ -37,6 +41,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, DbOperationsInte
         DbHelper.instance.setOnDbOperationDoneListener(this@MainActivity)
         super.onResume()
     }
+
+    /**
+     * Use this function only for the first time, because creation of user is not given
+     * Just uncomment it and run once. If you are done then use as per your wish and comment it again
+     */
+    /*private fun createAnUserOnlyFirstTime() {
+        DbHelper.instance.setOnDbOperationDoneListener(this)
+        var registerUserViewModel = ViewModelProviders.of(this@MainActivity).get(RegisterViewModel::class.java)
+        var userEntity: UserEntity = UserEntity("1001", "123", "sam", "tan")
+        registerUserViewModel.doRegister(this@MainActivity, userEntity)
+    }*/
 
     private fun setUpListeners() {
         btnLogin.setOnClickListener(this)
