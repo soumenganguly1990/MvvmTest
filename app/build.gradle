@@ -1,4 +1,7 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 26
@@ -17,6 +20,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    dataBinding {
+        enabled = true
+    }
+    kapt { generateStubs = true }
 }
 
 dependencies {
@@ -26,4 +33,29 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:26.+'
     testCompile 'junit:junit:4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    // ViewModel and LiveData
+    implementation "android.arch.lifecycle:extensions:$archRoomVersion"
+    annotationProcessor "android.arch.lifecycle:compiler:$archRoomVersion"
+
+    // Room
+    compile "android.arch.persistence.room:runtime:$archRoomVersion"
+    kapt "android.arch.persistence.room:compiler:$archRoomVersion"
+
+    // Recyclerview and cardview
+    compile 'com.android.support:cardview-v7:26.+'
+    compile 'com.android.support:recyclerview-v7:26.+'
+
+    // Sliding up panel
+    compile 'com.sothree.slidinguppanel:library:3.4.0'
+
+    // Test helpers for LiveData
+    testImplementation "android.arch.core:core-testing:$archRoomVersion"
+
+    // Test helpers for Room
+    testImplementation "android.arch.persistence.room:testing:$archRoomVersion"
+}
+repositories {
+    mavenCentral()
 }
