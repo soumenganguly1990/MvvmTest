@@ -15,9 +15,9 @@ A sample test application based on the MVVM architecture
 |------|--------|
 |Sample App|**~~Todo~~(Done)**|
 |Learn to write .md file|**~~Todo~~(Done)**|
-|MVVM Architecture|**Todo**|
+|MVVM Architecture|**~~Todo~~(Done)**|
 |RxJava|**Todo**|
-|LiveData|**Todo**|
+|LiveData|**~~Todo~~(Done)**|
 |Jenkins CI|**Important Todo**|
 
 ### Why this app
