@@ -21,7 +21,13 @@ public class DbHelper private constructor() {
         val instance: DbHelper by lazy {
             Holder.INSTANCE
         }
-        var callBackLocation: DbOperationsInterface? = null
+    }
+
+    // This is the callback holder //
+    var callBackLocation: DbOperationsInterface? = null
+
+    fun setOnDbOperationDoneListener(callBackLocation: DbOperationsInterface) {
+        this.callBackLocation = callBackLocation
     }
 
     /**
@@ -35,6 +41,9 @@ public class DbHelper private constructor() {
         if (loginResult == null) {
             callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, false)
         } else {
+            if(callBackLocation == null) {
+                Log.e("omg", "this is null!!")
+            }
             callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, true)
         }
     }
