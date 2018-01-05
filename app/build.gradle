@@ -50,6 +50,9 @@ dependencies {
     // Sliding up panel
     compile 'com.sothree.slidinguppanel:library:3.4.0'
 
+    // Kotlin coroutines
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.19.+"
+
     // Test helpers for LiveData
     testImplementation "android.arch.core:core-testing:$archRoomVersion"
 
@@ -58,4 +61,9 @@ dependencies {
 }
 repositories {
     mavenCentral()
+}
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }

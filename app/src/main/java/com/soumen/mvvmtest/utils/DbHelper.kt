@@ -1,11 +1,16 @@
 package com.soumen.mvvmtest.utils
 
+import android.arch.lifecycle.LiveData
 import android.content.Context
+import android.os.Looper
 import android.util.Log
 import com.soumen.mvvmtest.callbackinterfaces.DbOperationsInterface
 import com.soumen.mvvmtest.extras.MethodNameEnum
 import com.soumen.mvvmtest.roomdbops.AppDatabase
 import com.soumen.mvvmtest.roomdbops.entities.UserEntity
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
 
 /**
  * Created by Soumen on 03-01-2018.
@@ -37,14 +42,17 @@ public class DbHelper private constructor() {
      * @param password
      */
     fun callLoginMethod(context: Context, userId: String, password: String) {
-        var loginResult = AppDatabase.getAppDatabase(context).simpleLoginDao().doLogin(userId, password)
-        if (loginResult == null) {
-            callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, false)
-        } else {
-            if(callBackLocation == null) {
-                Log.e("omg", "this is null!!")
+        var loginResult: UserEntity? = null
+        var deferred = async {
+            loginResult = AppDatabase.getAppDatabase(context).simpleLoginDao().doLogin(userId, password)
+        }
+        runBlocking {
+            deferred.await()
+            if (loginResult == null) {
+                callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, false)
+            } else {
+                callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, true)
             }
-            callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, true)
         }
     }
 
@@ -54,15 +62,17 @@ public class DbHelper private constructor() {
      * @param userEntity
      */
     fun callRegisterMethod(context: Context, userEntity: UserEntity) {
-        try {
-            var registerResult = AppDatabase.getAppDatabase(context).registerUserDao().registerUser(userEntity)
-            if (registerResult >= 1L) {
-                callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.REGISTER, true)
-            } else {
+        var registerResult: Long? = null
+        var deferred = async {
+            registerResult = AppDatabase.getAppDatabase(context).registerUserDao().registerUser(userEntity)
+        }
+        runBlocking {
+            deferred.await()
+            if (registerResult == null) {
                 callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.REGISTER, false)
+            } else {
+                callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.REGISTER, true)
             }
-        } catch (e: Exception) {
-            callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.REGISTER, false)
         }
     }
 
@@ -71,12 +81,17 @@ public class DbHelper private constructor() {
      * @param context
      */
     fun callAllUserListMethod(context: Context) {
-        try {
-            var allUserList = AppDatabase.getAppDatabase(context).allUserListDao().getAllUserList()
-            callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.ALLUSERLIST, allUserList)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.ALLUSERLIST, null)
+        var allUserList: LiveData<List<UserEntity>>? = null
+        var deferred = async {
+            allUserList = AppDatabase.getAppDatabase(context).allUserListDao().getAllUserList()
+        }
+        runBlocking {
+            deferred.await()
+            if(allUserList == null) {
+                callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.ALLUSERLIST, null)
+            } else {
+                callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.ALLUSERLIST, allUserList)
+            }
         }
     }
 }

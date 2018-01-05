@@ -4,7 +4,6 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
-
 import com.soumen.mvvmtest.roomdbops.daos.AllUserListDao;
 import com.soumen.mvvmtest.roomdbops.daos.RegisterUserDao;
 import com.soumen.mvvmtest.roomdbops.daos.SimpleLoginDao;

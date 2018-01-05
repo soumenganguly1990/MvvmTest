@@ -13,6 +13,7 @@ import com.soumen.mvvmtest.utils.DbHelper
 import com.soumen.mvvmtest.viewmodels.LoginViewModel
 import com.soumen.mvvmtest.viewmodels.RegisterViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.experimental.async
 
 /**
  * Created by Soumen on 02-01-2018.
@@ -68,16 +69,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, DbOperationsInte
     }
 
     override fun onClick(v: View?) {
-        if(v == btnLogin) {
+        if (v == btnLogin) {
             validateUserLogin()
         }
-        if(v == btnShowList) {
+        if (v == btnShowList) {
             startActivity(Intent(this@MainActivity, AllUserListActivity::class.java))
         }
     }
 
     override fun <T> onDbOperationsCompleted(methodNameEnum: MethodNameEnum, result: T) {
-        if(methodNameEnum == MethodNameEnum.DOLOGIN) {
+        if (methodNameEnum == MethodNameEnum.DOLOGIN) {
             txtId.visibility = View.VISIBLE
             if (result as Boolean) {
                 btnShowList.visibility = View.VISIBLE
