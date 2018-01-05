@@ -8,7 +8,6 @@ import com.soumen.mvvmtest.callbackinterfaces.DbOperationsInterface
 import com.soumen.mvvmtest.extras.MethodNameEnum
 import com.soumen.mvvmtest.roomdbops.AppDatabase
 import com.soumen.mvvmtest.roomdbops.entities.UserEntity
-import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 
@@ -44,10 +43,20 @@ public class DbHelper private constructor() {
     fun callLoginMethod(context: Context, userId: String, password: String) {
         var loginResult: UserEntity? = null
         var deferred = async {
+            if(Looper.myLooper() == Looper.getMainLooper()) {
+                Log.e("Thread", "MAIN!!")
+            } else {
+                Log.e("Thread", "Not main, phew")
+            }
             loginResult = AppDatabase.getAppDatabase(context).simpleLoginDao().doLogin(userId, password)
         }
         runBlocking {
             deferred.await()
+            if(Looper.myLooper() == Looper.getMainLooper()) {
+                Log.e("Thread", "MAIN!!")
+            } else {
+                Log.e("Thread", "Not main, god help me")
+            }
             if (loginResult == null) {
                 callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, false)
             } else {
