@@ -8,6 +8,7 @@ A sample test application based on the MVVM architecture
 - Integrate and test MVVM architecture
 - Use RxJava
 - Use LiveData
+- Learn how to use Stetho with a simple retrofit based webservice call
 - Check Jenkins CI for this app
 
 ### Current Status
@@ -18,6 +19,7 @@ A sample test application based on the MVVM architecture
 |MVVM Architecture|**~~Todo~~(Done)**|
 |RxJava|**Todo**|
 |LiveData|**~~Todo~~(Done)**|
+|Stetho|**Todo**|
 |Jenkins CI|**Important Todo**|
 
 ### Why this app
