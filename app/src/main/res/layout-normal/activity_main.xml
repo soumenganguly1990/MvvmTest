@@ -68,4 +68,13 @@
 
     </LinearLayout>
 
+    <android.support.v7.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/holo_blue_light"
+        android:textColor="@android:color/white"
+        android:text="Test Webservice For Stetho"
+        android:id="@+id/btnTestStetho"/>
+
 </RelativeLayout>

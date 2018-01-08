@@ -4,16 +4,19 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import com.soumen.mvvmtest.R
 import com.soumen.mvvmtest.callbackinterfaces.DbOperationsInterface
 import com.soumen.mvvmtest.extras.MethodNameEnum
-import com.soumen.mvvmtest.roomdbops.entities.UserEntity
+import com.soumen.mvvmtest.models.Country
+import com.soumen.mvvmtest.rest.ApiInterface
 import com.soumen.mvvmtest.utils.DbHelper
+import com.soumen.mvvmtest.viewmodels.CallAServiceViewModel
 import com.soumen.mvvmtest.viewmodels.LoginViewModel
-import com.soumen.mvvmtest.viewmodels.RegisterViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.experimental.async
+import retrofit2.Call
+import retrofit2.Response
 
 /**
  * Created by Soumen on 02-01-2018.
@@ -22,6 +25,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, DbOperationsInte
 
     /* The viewmodel object(s) */
     lateinit var loginViewModel: LoginViewModel
+    lateinit var callAServiceViewModel: CallAServiceViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +33,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, DbOperationsInte
         setContentView(R.layout.activity_main)
 
         loginViewModel = ViewModelProviders.of(this@MainActivity).get(LoginViewModel::class.java)
+        callAServiceViewModel = ViewModelProviders.of(this@MainActivity).get(CallAServiceViewModel::class.java)
         setUpListeners()
 
         edtUserId.setText("1001")
@@ -57,6 +62,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, DbOperationsInte
     private fun setUpListeners() {
         btnLogin.setOnClickListener(this)
         btnShowList.setOnClickListener(this)
+        btnTestStetho.setOnClickListener(this)
     }
 
     /**
@@ -68,12 +74,28 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, DbOperationsInte
         loginViewModel.doLogin(this@MainActivity)
     }
 
+    private fun callCountryService() {
+        callAServiceViewModel.callTheCountryWebservice(object : ApiInterface<List<Country>>{
+            override fun onResponse(call: Call<List<Country>>?, response: Response<List<Country>>?) {
+                if(response != null) {
+                    Log.e("The result", response.body().toString())
+                }
+            }
+            override fun onFailure(call: Call<List<Country>>?, t: Throwable) {
+                Log.e("Error result", t.message)
+            }
+        })
+    }
+
     override fun onClick(v: View?) {
         if (v == btnLogin) {
             validateUserLogin()
         }
         if (v == btnShowList) {
             startActivity(Intent(this@MainActivity, AllUserListActivity::class.java))
+        }
+        if(v == btnTestStetho) {
+            callCountryService()
         }
     }
 

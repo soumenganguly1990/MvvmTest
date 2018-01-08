@@ -66,7 +66,7 @@ public class DbHelper private constructor() {
     }
 
     /**
-     * Method to insert an user to db
+     * Method to insert an user entity to db
      * @param context
      * @param userEntity
      */
