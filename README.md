@@ -19,7 +19,7 @@ A sample test application based on the MVVM architecture
 |MVVM Architecture|**~~Todo~~(Done)**|
 |RxJava|**Todo**|
 |LiveData|**~~Todo~~(Done)**|
-|Stetho|**Todo**|
+|Stetho|**~~Todo~~(Done)**|
 |Jenkins CI|**Important Todo**|
 
 ### Why this app
