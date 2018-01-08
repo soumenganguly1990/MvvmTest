@@ -1,4 +1,4 @@
-package com.soumen.mvvmtest.rest
+package com.soumen.mvvmtest.callbackinterfaces
 
 import retrofit2.Call
 import retrofit2.Response

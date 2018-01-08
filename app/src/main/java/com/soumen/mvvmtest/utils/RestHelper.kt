@@ -3,7 +3,7 @@ package com.soumen.mvvmtest.utils
 import com.soumen.mvvmtest.models.Country
 import com.soumen.mvvmtest.rest.ApiCalls
 import com.soumen.mvvmtest.rest.ApiClient
-import com.soumen.mvvmtest.rest.ApiInterface
+import com.soumen.mvvmtest.callbackinterfaces.ApiInterface
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

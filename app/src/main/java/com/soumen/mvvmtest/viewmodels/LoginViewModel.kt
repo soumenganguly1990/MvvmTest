@@ -2,6 +2,7 @@ package com.soumen.mvvmtest.viewmodels
 
 import android.arch.lifecycle.ViewModel
 import android.content.Context
+import com.soumen.mvvmtest.callbackinterfaces.DbOperationsInterface
 import com.soumen.mvvmtest.utils.DbHelper
 
 /**
@@ -20,7 +21,7 @@ class LoginViewModel : ViewModel() {
         this.password = password
     }
 
-    public fun doLogin(context: Context) {
-        DbHelper.instance.callLoginMethod(context, userId, password)
+    public fun doLogin(context: Context, dbOperationsInterface: DbOperationsInterface) {
+        DbHelper.instance.callLoginMethod(context, userId, password, dbOperationsInterface)
     }
 }

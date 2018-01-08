@@ -13,7 +13,6 @@ import com.soumen.mvvmtest.adapters.AllUserAdapter
 import com.soumen.mvvmtest.callbackinterfaces.DbOperationsInterface
 import com.soumen.mvvmtest.extras.MethodNameEnum
 import com.soumen.mvvmtest.roomdbops.entities.UserEntity
-import com.soumen.mvvmtest.utils.DbHelper
 import com.soumen.mvvmtest.viewmodels.AllUserListViewModel
 import com.soumen.mvvmtest.viewmodels.RegisterViewModel
 import kotlinx.android.synthetic.main.activity_alluser.*
@@ -40,9 +39,7 @@ class AllUserListActivity : AppCompatActivity(), DbOperationsInterface, View.OnC
         allUserListViewModel = ViewModelProviders.of(this@AllUserListActivity).get(AllUserListViewModel::class.java)
         registerUserViewModel = ViewModelProviders.of(this@AllUserListActivity).get(RegisterViewModel::class.java)
 
-        /* set listener for callback */
-        DbHelper.instance.setOnDbOperationDoneListener(this@AllUserListActivity)
-        allUserListViewModel.getAllUserListFromDb(this@AllUserListActivity)
+        allUserListViewModel.getAllUserListFromDb(this@AllUserListActivity, this@AllUserListActivity)
 
         setUpListeners()
     }
@@ -73,7 +70,7 @@ class AllUserListActivity : AppCompatActivity(), DbOperationsInterface, View.OnC
     private fun getUserDetailsAndSaveToRoom() {
         var userEntity: UserEntity = UserEntity(edtRegId.text.toString(),
                 edtRegPassword.text.toString(), edtRegFname.text.toString(), edtRegLname.text.toString())
-        registerUserViewModel.doRegister(this@AllUserListActivity, userEntity)
+        registerUserViewModel.doRegister(this@AllUserListActivity, userEntity, this@AllUserListActivity)
     }
 
     /**
@@ -94,7 +91,7 @@ class AllUserListActivity : AppCompatActivity(), DbOperationsInterface, View.OnC
             } else {
                 Toast.makeText(this@AllUserListActivity, "User Could Not Be Created", Toast.LENGTH_SHORT).show()
             }
-        } else {
+        } else if(whichMethod == MethodNameEnum.ALLUSERLIST) {
             if (result == null) {
                 Toast.makeText(this@AllUserListActivity, "Error or no result found", Toast.LENGTH_SHORT).show()
             } else {

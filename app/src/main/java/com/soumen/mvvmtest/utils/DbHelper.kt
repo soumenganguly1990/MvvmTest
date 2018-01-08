@@ -27,20 +27,13 @@ public class DbHelper private constructor() {
         }
     }
 
-    // This is the callback holder //
-    var callBackLocation: DbOperationsInterface? = null
-
-    fun setOnDbOperationDoneListener(callBackLocation: DbOperationsInterface) {
-        this.callBackLocation = callBackLocation
-    }
-
     /**
      * Method to invoke the login method
      * @param context
      * @param userId
      * @param password
      */
-    fun callLoginMethod(context: Context, userId: String, password: String) {
+    fun callLoginMethod(context: Context, userId: String, password: String, dbOperationsInterface: DbOperationsInterface) {
         var loginResult: UserEntity? = null
         var deferred = async {
             if(Looper.myLooper() == Looper.getMainLooper()) {
@@ -58,9 +51,9 @@ public class DbHelper private constructor() {
                 Log.e("Thread", "Not main, god help me")
             }
             if (loginResult == null) {
-                callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, false)
+                dbOperationsInterface!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, false)
             } else {
-                callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, true)
+                dbOperationsInterface!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, true)
             }
         }
     }
@@ -70,7 +63,7 @@ public class DbHelper private constructor() {
      * @param context
      * @param userEntity
      */
-    fun callRegisterMethod(context: Context, userEntity: UserEntity) {
+    fun callRegisterMethod(context: Context, userEntity: UserEntity, dbOperationsInterface: DbOperationsInterface) {
         var registerResult: Long? = null
         var deferred = async {
             registerResult = AppDatabase.getAppDatabase(context).registerUserDao().registerUser(userEntity)
@@ -78,9 +71,9 @@ public class DbHelper private constructor() {
         runBlocking {
             deferred.await()
             if (registerResult == null) {
-                callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.REGISTER, false)
+                dbOperationsInterface!!.onDbOperationsCompleted(MethodNameEnum.REGISTER, false)
             } else {
-                callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.REGISTER, true)
+                dbOperationsInterface!!.onDbOperationsCompleted(MethodNameEnum.REGISTER, true)
             }
         }
     }
@@ -89,7 +82,7 @@ public class DbHelper private constructor() {
      * Method to get all user record from room db
      * @param context
      */
-    fun callAllUserListMethod(context: Context) {
+    fun callAllUserListMethod(context: Context, dbOperationsInterface: DbOperationsInterface) {
         var allUserList: LiveData<List<UserEntity>>? = null
         var deferred = async {
             allUserList = AppDatabase.getAppDatabase(context).allUserListDao().getAllUserList()
@@ -97,9 +90,9 @@ public class DbHelper private constructor() {
         runBlocking {
             deferred.await()
             if(allUserList == null) {
-                callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.ALLUSERLIST, null)
+                dbOperationsInterface!!.onDbOperationsCompleted(MethodNameEnum.ALLUSERLIST, null)
             } else {
-                callBackLocation!!.onDbOperationsCompleted(MethodNameEnum.ALLUSERLIST, allUserList)
+                dbOperationsInterface!!.onDbOperationsCompleted(MethodNameEnum.ALLUSERLIST, allUserList)
             }
         }
     }

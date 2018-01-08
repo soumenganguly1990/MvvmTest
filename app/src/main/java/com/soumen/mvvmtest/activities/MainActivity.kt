@@ -10,8 +10,7 @@ import com.soumen.mvvmtest.R
 import com.soumen.mvvmtest.callbackinterfaces.DbOperationsInterface
 import com.soumen.mvvmtest.extras.MethodNameEnum
 import com.soumen.mvvmtest.models.Country
-import com.soumen.mvvmtest.rest.ApiInterface
-import com.soumen.mvvmtest.utils.DbHelper
+import com.soumen.mvvmtest.callbackinterfaces.ApiInterface
 import com.soumen.mvvmtest.viewmodels.CallAServiceViewModel
 import com.soumen.mvvmtest.viewmodels.LoginViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -43,13 +42,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, DbOperationsInte
     }
 
     override fun onResume() {
-        /* Set the db related operation's callback location to this activity */
-        DbHelper.instance.setOnDbOperationDoneListener(this@MainActivity)
         super.onResume()
     }
 
     /**
-     * Use this function only for the first time, because creation of user is not given
+     * Use this function only for the first time, because creation of user is not given and it creates an user
      * Just uncomment it and run once. If you are done then use as per your wish and comment it again
      */
     /*private fun createAnUserOnlyFirstTime() {
@@ -71,11 +68,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, DbOperationsInte
     private fun validateUserLogin() {
         loginViewModel.setUserId(edtUserId.text.toString())
         loginViewModel.setPassword(edtUserPassword.text.toString())
-        loginViewModel.doLogin(this@MainActivity)
+        loginViewModel.doLogin(this@MainActivity, this@MainActivity)
     }
 
+    /**
+     * Calls the country service (3rd party open source, used here just for checking)
+     */
     private fun callCountryService() {
-        callAServiceViewModel.callTheCountryWebservice(object : ApiInterface<List<Country>>{
+        callAServiceViewModel.callTheCountryWebservice(object : ApiInterface<List<Country>> {
             override fun onResponse(call: Call<List<Country>>?, response: Response<List<Country>>?) {
                 if(response != null) {
                     Log.e("The result", response.body().toString())

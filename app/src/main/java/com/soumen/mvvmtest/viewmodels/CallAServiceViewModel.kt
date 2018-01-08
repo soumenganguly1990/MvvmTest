@@ -2,7 +2,7 @@ package com.soumen.mvvmtest.viewmodels
 
 import android.arch.lifecycle.ViewModel
 import com.soumen.mvvmtest.models.Country
-import com.soumen.mvvmtest.rest.ApiInterface
+import com.soumen.mvvmtest.callbackinterfaces.ApiInterface
 import com.soumen.mvvmtest.utils.RestHelper
 
 /**
