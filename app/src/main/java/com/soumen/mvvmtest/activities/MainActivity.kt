@@ -1,5 +1,6 @@
 package com.soumen.mvvmtest.activities
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
@@ -20,7 +21,7 @@ import retrofit2.Response
 /**
  * Created by Soumen on 02-01-2018.
  */
-class MainActivity : AppCompatActivity(), View.OnClickListener, DbOperationsInterface {
+class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     /* The viewmodel object(s) */
     lateinit var loginViewModel: LoginViewModel
@@ -68,7 +69,21 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, DbOperationsInte
     private fun validateUserLogin() {
         loginViewModel.setUserId(edtUserId.text.toString())
         loginViewModel.setPassword(edtUserPassword.text.toString())
-        loginViewModel.doLogin(this@MainActivity, this@MainActivity)
+        LoginViewModel.loginStatusLiveData.observe(this@MainActivity, Observer {
+            loginStatus ->
+            txtId.visibility = View.VISIBLE
+            when (loginStatus) {
+                true -> {
+                    btnShowList.visibility = View.VISIBLE
+                    txtId.text = "Success YAYYYY!!!!"
+                }
+                false -> {
+                    btnShowList.visibility = View.GONE
+                    txtId.text = "Failure"
+                }
+            }
+        })
+        loginViewModel.doLoginWithLambda(this@MainActivity)
     }
 
     /**
@@ -96,19 +111,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, DbOperationsInte
         }
         if(v == btnTestStetho) {
             callCountryService()
-        }
-    }
-
-    override fun <T> onDbOperationsCompleted(methodNameEnum: MethodNameEnum, result: T) {
-        if (methodNameEnum == MethodNameEnum.DOLOGIN) {
-            txtId.visibility = View.VISIBLE
-            if (result as Boolean) {
-                btnShowList.visibility = View.VISIBLE
-                txtId.text = "Success"
-            } else {
-                txtId.text = "Login failed"
-                btnShowList.visibility = View.GONE
-            }
         }
     }
 

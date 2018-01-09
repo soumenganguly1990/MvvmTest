@@ -2,8 +2,6 @@ package com.soumen.mvvmtest.utils
 
 import android.arch.lifecycle.LiveData
 import android.content.Context
-import android.os.Looper
-import android.util.Log
 import com.soumen.mvvmtest.callbackinterfaces.DbOperationsInterface
 import com.soumen.mvvmtest.extras.MethodNameEnum
 import com.soumen.mvvmtest.roomdbops.AppDatabase
@@ -33,27 +31,17 @@ public class DbHelper private constructor() {
      * @param userId
      * @param password
      */
-    fun callLoginMethod(context: Context, userId: String, password: String, dbOperationsInterface: DbOperationsInterface) {
+    fun callLoginMethod(context: Context, userId: String, password: String, loginStatus: (Boolean) -> Unit) {
         var loginResult: UserEntity? = null
         var deferred = async {
-            if(Looper.myLooper() == Looper.getMainLooper()) {
-                Log.e("Thread", "MAIN!!")
-            } else {
-                Log.e("Thread", "Not main, phew")
-            }
             loginResult = AppDatabase.getAppDatabase(context).simpleLoginDao().doLogin(userId, password)
         }
         runBlocking {
             deferred.await()
-            if(Looper.myLooper() == Looper.getMainLooper()) {
-                Log.e("Thread", "MAIN!!")
-            } else {
-                Log.e("Thread", "Not main, god help me")
-            }
             if (loginResult == null) {
-                dbOperationsInterface!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, false)
+                loginStatus.invoke(false)
             } else {
-                dbOperationsInterface!!.onDbOperationsCompleted(MethodNameEnum.DOLOGIN, true)
+                loginStatus.invoke(true)
             }
         }
     }
@@ -82,7 +70,7 @@ public class DbHelper private constructor() {
      * Method to get all user record from room db
      * @param context
      */
-    fun callAllUserListMethod(context: Context, dbOperationsInterface: DbOperationsInterface) {
+    fun callAllUserListMethod(context: Context, userList: (LiveData<List<UserEntity>>?) -> Unit) {
         var allUserList: LiveData<List<UserEntity>>? = null
         var deferred = async {
             allUserList = AppDatabase.getAppDatabase(context).allUserListDao().getAllUserList()
@@ -90,9 +78,9 @@ public class DbHelper private constructor() {
         runBlocking {
             deferred.await()
             if(allUserList == null) {
-                dbOperationsInterface!!.onDbOperationsCompleted(MethodNameEnum.ALLUSERLIST, null)
+                userList.invoke(null)
             } else {
-                dbOperationsInterface!!.onDbOperationsCompleted(MethodNameEnum.ALLUSERLIST, allUserList)
+                userList.invoke(allUserList)
             }
         }
     }

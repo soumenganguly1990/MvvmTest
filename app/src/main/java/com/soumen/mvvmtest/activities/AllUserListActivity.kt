@@ -1,6 +1,5 @@
 package com.soumen.mvvmtest.activities
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -39,7 +38,15 @@ class AllUserListActivity : AppCompatActivity(), DbOperationsInterface, View.OnC
         allUserListViewModel = ViewModelProviders.of(this@AllUserListActivity).get(AllUserListViewModel::class.java)
         registerUserViewModel = ViewModelProviders.of(this@AllUserListActivity).get(RegisterViewModel::class.java)
 
-        allUserListViewModel.getAllUserListFromDb(this@AllUserListActivity, this@AllUserListActivity)
+        AllUserListViewModel.allUserListViewModelLivedata.observe(this@AllUserListActivity, Observer {
+            allUserList ->
+            populateAllUserList()
+            allUserList!!.observe(this@AllUserListActivity, Observer<List<UserEntity>> {
+                t ->
+                allUserAdapter.addItems(t)
+            })
+        })
+        allUserListViewModel.getAllUserListFromDb(this@AllUserListActivity)
 
         setUpListeners()
     }
@@ -90,15 +97,6 @@ class AllUserListActivity : AppCompatActivity(), DbOperationsInterface, View.OnC
                 clearFields()
             } else {
                 Toast.makeText(this@AllUserListActivity, "User Could Not Be Created", Toast.LENGTH_SHORT).show()
-            }
-        } else if(whichMethod == MethodNameEnum.ALLUSERLIST) {
-            if (result == null) {
-                Toast.makeText(this@AllUserListActivity, "Error or no result found", Toast.LENGTH_SHORT).show()
-            } else {
-                /* observe the livedata result for changes */
-                (result as LiveData<List<UserEntity>>).observe(this@AllUserListActivity, Observer<List<UserEntity>> {
-                    t -> allUserAdapter.addItems(t)
-                })
             }
         }
     }

@@ -1,7 +1,9 @@
 package com.soumen.mvvmtest.viewmodels
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Context
+import android.util.Log
 import com.soumen.mvvmtest.callbackinterfaces.DbOperationsInterface
 import com.soumen.mvvmtest.utils.DbHelper
 
@@ -13,6 +15,10 @@ class LoginViewModel : ViewModel() {
     private lateinit var userId: String
     private lateinit var password: String
 
+    companion object {
+        val loginStatusLiveData = MutableLiveData<Boolean>()
+    }
+
     public fun setUserId(userId: String) {
         this.userId = userId
     }
@@ -21,7 +27,20 @@ class LoginViewModel : ViewModel() {
         this.password = password
     }
 
-    public fun doLogin(context: Context, dbOperationsInterface: DbOperationsInterface) {
-        DbHelper.instance.callLoginMethod(context, userId, password, dbOperationsInterface)
+    public fun doLoginWithLambda(context: Context) {
+        DbHelper.instance.callLoginMethod(context, userId, password, {
+            loginStatus ->
+            when (loginStatus) {
+                true -> {
+                    loginStatusLiveData.postValue(true)
+                }
+                false -> {
+                    loginStatusLiveData.postValue(false)
+                }
+                else -> {
+                    Log.e("situation", "abnormal")
+                }
+            }
+        })
     }
 }
