@@ -2,18 +2,17 @@ package com.soumen.mvvmtest.activities
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import com.soumen.mvvmtest.ActivityNavigator
 import com.soumen.mvvmtest.R
-import com.soumen.mvvmtest.callbackinterfaces.DbOperationsInterface
-import com.soumen.mvvmtest.extras.MethodNameEnum
 import com.soumen.mvvmtest.models.Country
 import com.soumen.mvvmtest.callbackinterfaces.ApiInterface
 import com.soumen.mvvmtest.viewmodels.CallAServiceViewModel
 import com.soumen.mvvmtest.viewmodels.LoginViewModel
+import com.soumen.mvvmtest.views.MainActivityView
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Response
@@ -26,6 +25,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     /* The viewmodel object(s) */
     lateinit var loginViewModel: LoginViewModel
     lateinit var callAServiceViewModel: CallAServiceViewModel
+    lateinit var mainActivityView: MainActivityView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,11 +34,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         loginViewModel = ViewModelProviders.of(this@MainActivity).get(LoginViewModel::class.java)
         callAServiceViewModel = ViewModelProviders.of(this@MainActivity).get(CallAServiceViewModel::class.java)
+        mainActivityView = MainActivityView(findViewById(android.R.id.content))
         setUpListeners()
-
-        edtUserId.setText("1001")
-        edtUserPassword.setText("123")
-
         //createAnUserOnlyFirstTime()   // uncomment this function if running for the first time
     }
 
@@ -67,19 +64,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      * Updates UI on login result retrieval
      */
     private fun validateUserLogin() {
-        loginViewModel.setUserId(edtUserId.text.toString())
-        loginViewModel.setPassword(edtUserPassword.text.toString())
+        loginViewModel.setUserId(mainActivityView.getUserId())
+        loginViewModel.setPassword(mainActivityView.getUserPassword())
         LoginViewModel.loginStatusLiveData.observe(this@MainActivity, Observer {
             loginStatus ->
-            txtId.visibility = View.VISIBLE
             when (loginStatus) {
                 true -> {
-                    btnShowList.visibility = View.VISIBLE
-                    txtId.text = "Success YAYYYY!!!!"
+                    mainActivityView.updateUiOnLoginSuccess()
                 }
                 false -> {
-                    btnShowList.visibility = View.GONE
-                    txtId.text = "Failure"
+                    mainActivityView.updateUiOnLoginFailure()
                 }
             }
         })
@@ -107,7 +101,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             validateUserLogin()
         }
         if (v == btnShowList) {
-            startActivity(Intent(this@MainActivity, AllUserListActivity::class.java))
+            ActivityNavigator(this@MainActivity).navigateToAllUserListPage()
         }
         if(v == btnTestStetho) {
             callCountryService()

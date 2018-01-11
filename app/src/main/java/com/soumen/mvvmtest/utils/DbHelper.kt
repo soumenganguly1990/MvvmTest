@@ -2,8 +2,6 @@ package com.soumen.mvvmtest.utils
 
 import android.arch.lifecycle.LiveData
 import android.content.Context
-import com.soumen.mvvmtest.callbackinterfaces.DbOperationsInterface
-import com.soumen.mvvmtest.extras.MethodNameEnum
 import com.soumen.mvvmtest.roomdbops.AppDatabase
 import com.soumen.mvvmtest.roomdbops.entities.UserEntity
 import kotlinx.coroutines.experimental.async
@@ -51,7 +49,7 @@ public class DbHelper private constructor() {
      * @param context
      * @param userEntity
      */
-    fun callRegisterMethod(context: Context, userEntity: UserEntity, dbOperationsInterface: DbOperationsInterface) {
+    fun callRegisterMethod(context: Context, userEntity: UserEntity, creationStatus: (Boolean) -> Unit) {
         var registerResult: Long? = null
         var deferred = async {
             registerResult = AppDatabase.getAppDatabase(context).registerUserDao().registerUser(userEntity)
@@ -59,9 +57,9 @@ public class DbHelper private constructor() {
         runBlocking {
             deferred.await()
             if (registerResult == null) {
-                dbOperationsInterface!!.onDbOperationsCompleted(MethodNameEnum.REGISTER, false)
+                creationStatus.invoke(false)
             } else {
-                dbOperationsInterface!!.onDbOperationsCompleted(MethodNameEnum.REGISTER, true)
+                creationStatus.invoke(true)
             }
         }
     }
